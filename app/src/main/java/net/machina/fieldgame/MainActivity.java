@@ -1,5 +1,6 @@
 package net.machina.fieldgame;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtLogin = findViewById(R.id.txtLogin);
         txtPassword = findViewById(R.id.txtPassword);
         findViewById(R.id.btnLogin).setOnClickListener(this);
+        findViewById(R.id.btnRegister).setOnClickListener(this);
     }
 
     @Override
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 middleman.login(txtLogin.getText().toString(), txtPassword.getText().toString(), this);
                 break;
             case R.id.btnRegister:
-                Toast.makeText(this, "Rejestracja", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
                 break;
         }
     }
@@ -51,11 +53,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 JSONObject obj = new JSONObject(result);
                 if(obj.has("message")) {
                     if(obj.getString("message").toLowerCase().contains("logged in")) { // Lggged in as...
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("Sukces")
-                                .setMessage("Zalogowano pomyślnie")
-                                .setNeutralButton("OK", null)
-                                .show();
+                        Toast.makeText(MainActivity.this, "Zalogowano pomyślnie", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(MainActivity.this, GameActivity.class));
                     } else if(obj.getString("message").toLowerCase().contains("credentials")) { // Wrong credentials
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("Błąd")

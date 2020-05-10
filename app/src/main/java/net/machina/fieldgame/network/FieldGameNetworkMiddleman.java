@@ -5,9 +5,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.JavaNetCookieJar;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -25,7 +28,10 @@ public class FieldGameNetworkMiddleman {
     }
 
     private FieldGameNetworkMiddleman() {
-        httpClient = new OkHttpClient.Builder().build();
+        CookieManager cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
+        httpClient = new OkHttpClient.Builder().cookieJar(cookieJar).build();
     }
 
     public void login(String username, String password, final OnDataReceivedListener listener) {

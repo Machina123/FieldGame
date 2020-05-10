@@ -10,4 +10,6 @@
     <string name="label_please_wait">Proszę czekać...</string>
     <string name="title_activity_maps">Map</string>
     <string name="button_label_image">Wykryj Obiekt</string>
+    <string name="label_no_account">Nie posiadasz konta?</string>
+    <string name="title_registration">Rejestracja</string>
 </resources>
