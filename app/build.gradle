@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    def camerax_version = '1.0.0-beta01'
+    def camerax_version = '1.0.0-beta03'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -44,6 +44,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
     implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.1.1'
     implementation 'com.google.firebase:firebase-ml-vision-image-label-model:20.0.1'
+
+    implementation "com.google.android.material:material:1.2.0-alpha06"
+
+    implementation "com.squareup.okhttp3:okhttp:4.6.0"
+
 
     implementation 'com.github.d-max:spots-dialog:1.1@aar'
 

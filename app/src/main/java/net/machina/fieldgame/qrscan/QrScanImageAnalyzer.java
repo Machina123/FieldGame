@@ -1,7 +1,6 @@
 package net.machina.fieldgame.qrscan;
 
 import android.media.Image;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis;
@@ -44,7 +43,7 @@ public class QrScanImageAnalyzer implements ImageAnalysis.Analyzer {
     @Override
     @androidx.camera.core.ExperimentalGetImage
     public void analyze(@NonNull ImageProxy imageProxy) {
-        Log.d(TAG, "QrScanImageAnalyzer::analyze() executed");
+//        Log.d(TAG, "QrScanImageAnalyzer::analyze() executed");
         FirebaseVisionBarcodeDetectorOptions options = new FirebaseVisionBarcodeDetectorOptions.Builder()
                 .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_QR_CODE)
                 .build();

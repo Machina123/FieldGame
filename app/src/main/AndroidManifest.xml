@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.machina.fieldgame">
 
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -40,12 +41,14 @@
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode, label" />
 
-        <activity android:name=".ScannerActivity" />
         <activity android:name=".ImageLabelingActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ScannerActivity"
+            android:label="@string/title_qr_scanner"/>
+        <activity android:name=".MainActivity"
+            android:label="@string/title_login"/>
+        <activity android:name=".SplashScreenActivity" android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

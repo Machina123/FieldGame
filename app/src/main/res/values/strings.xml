@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">FieldGame</string>
     <string name="button_qr_scanner">Start QR scanner</string>
+    <string name="label_login">Zaloguj się</string>
+    <string name="field_username">Nazwa użytkownika</string>
+    <string name="field_password">Hasło</string>
+    <string name="button_register">Zarejestruj się</string>
+    <string name="title_qr_scanner">Zeskanuj kod QR</string>
+    <string name="title_login">Logowanie</string>
+    <string name="label_please_wait">Proszę czekać...</string>
     <string name="title_activity_maps">Map</string>
     <string name="button_label_image">Wykryj Obiekt</string>
 </resources>
