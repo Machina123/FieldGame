@@ -45,8 +45,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
         MarkersHandler p1 = new MarkersHandler(-34, 151, "Sydney");
-        p1.CreateNewLatLng(mMap);
-        p1.DrawSearchingArea(mMap);
+        p1.CreateNewLatLng();
+        p1.DrawSearchingArea(mMap, 100);
 
 
 
@@ -55,11 +55,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationChanged(Location location) {
                 MarkersHandler playerPosition = new MarkersHandler(location.getLatitude(), location.getLongitude(), "Twoja pozycja");
-                playerPosition.CreateNewLatLng(mMap);
+                playerPosition.CreateNewLatLng();
                 playerPosition.DrawMarker(mMap);
 
                 MarkersHandler p2 = new MarkersHandler(location.getLatitude() - 0.0008, location.getLongitude() - 0.0008, "XD");
-                p2.CreateNewLatLng(mMap);
+                p2.CreateNewLatLng();
                 p2.DrawMarker(mMap);
 
                 Location loc = new Location(LocationManager.GPS_PROVIDER);
@@ -67,7 +67,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 location.setLongitude(latLng.longitude);
 
                 if(location.distanceTo(loc) <= 100){
-                    p2.DrawSearchingArea(mMap);
+                    p2.DrawSearchingArea(mMap, 100);
                 }
 
             }

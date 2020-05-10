@@ -20,7 +20,7 @@ public class MarkersHandler {
         this.title = title;
     }
 
-    public void CreateNewLatLng(GoogleMap map){
+    public void CreateNewLatLng(){
         latLng = new LatLng(latitude, longitude);
     }
 
@@ -29,10 +29,10 @@ public class MarkersHandler {
         map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 
-    public void DrawSearchingArea(GoogleMap map){
+    public void DrawSearchingArea(GoogleMap map, int radius){
         CircleOptions circle = new CircleOptions();
         circle.center(latLng);
-        circle.radius(100);
+        circle.radius(radius);
         circle.strokeColor(Color.BLUE);
         circle.strokeWidth(10);
         circle.fillColor(Color.argb(90, 0, 205, 255));
