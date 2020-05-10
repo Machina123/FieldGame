@@ -11,8 +11,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
+import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 
 import net.machina.fieldgame.connectingcheck.InternetCheck;
 
@@ -54,14 +56,16 @@ public class ImageCaptureCallback extends ImageCapture.OnImageCapturedCallback {
             @Override
             public void accept(boolean internet) {
                 if(internet) {
-                    FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance().getCloudImageLabeler();
+                    FirebaseVisionCloudImageLabelerOptions option = new FirebaseVisionCloudImageLabelerOptions.Builder().setConfidenceThreshold(0.75f).build();
+                    FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance().getCloudImageLabeler(option);
                     Task<List<FirebaseVisionImageLabel>> result = labeler.processImage(image);
                     result.addOnSuccessListener((labels) -> imageReceivedListener.onImageReceived(labels));
                     result.addOnFailureListener(Exception::printStackTrace);
                     proxyImage.close();
                 }
                 else{
-                    FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance().getOnDeviceImageLabeler();
+                    FirebaseVisionOnDeviceImageLabelerOptions option = new FirebaseVisionOnDeviceImageLabelerOptions.Builder().setConfidenceThreshold(0.75f).build();
+                    FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance().getOnDeviceImageLabeler(option);
                     Task<List<FirebaseVisionImageLabel>> result = labeler.processImage(image);
                     result.addOnSuccessListener((labels) -> imageReceivedListener.onImageReceived(labels));
                     result.addOnFailureListener(Exception::printStackTrace);

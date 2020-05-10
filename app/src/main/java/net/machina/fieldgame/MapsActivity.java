@@ -26,7 +26,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final long MIN_REFRESH_TIME = 1000;
     private final long MIN_REFRESH_DISTANCE = 1;
 
-    private LatLng latLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +62,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 p2.DrawMarker(mMap);
 
                 Location loc = new Location(LocationManager.GPS_PROVIDER);
-                location.setLatitude(latLng.latitude);
-                location.setLongitude(latLng.longitude);
+                location.setLatitude(p2.getLatLng().latitude);
+                location.setLongitude(p2.getLatLng().longitude);
 
                 if(location.distanceTo(loc) <= 100){
                     p2.DrawSearchingArea(mMap, 100);
