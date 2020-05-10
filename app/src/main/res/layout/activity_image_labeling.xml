@@ -17,8 +17,6 @@
         android:id="@+id/btn_detect"
         android:layout_alignParentBottom="true"
         android:text="@string/button_label_image"
-        android:background="@color/colorPrimary"
-        android:textColor="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </Button>

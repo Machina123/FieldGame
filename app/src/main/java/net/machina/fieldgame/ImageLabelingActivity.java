@@ -1,7 +1,6 @@
 package net.machina.fieldgame;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.camera2.Camera2Config;
 import androidx.camera.core.AspectRatio;
@@ -19,21 +18,15 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.Manifest;
 import android.app.AlertDialog;
-
 import android.content.pm.PackageManager;
-
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-
 import com.google.common.util.concurrent.ListenableFuture;
-
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
-
 
 import net.machina.fieldgame.imagelabeling.ImageCaptureCallback;
 import net.machina.fieldgame.imagelabeling.ImageReceivedListener;
@@ -51,10 +44,9 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
     private PreviewView previewView;
     private Button btn;
     private ImageCaptureCallback callback;
-    AlertDialog dialog;
+    private AlertDialog dialog;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +58,6 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
         previewView = findViewById(R.id.preview_view);
         btn = findViewById(R.id.btn_detect);
 
-
         dialog = new SpotsDialog.Builder().setMessage("Proszę czekać ...").setCancelable(false).build();
 
         cameraProviderFuture.addListener(() -> {
@@ -77,19 +68,12 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
                 e.printStackTrace();
             }
         }, ContextCompat.getMainExecutor(this));
-
     }
 
-    private ImageLabelingActivity getActivity(){
-        return this;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void bindImageCapture(ProcessCameraProvider cameraProvider) {
         int rotation = previewView.getDisplay().getRotation();
         Preview preview = new Preview.Builder().setTargetAspectRatio(AspectRatio.RATIO_16_9).setTargetRotation(rotation)
                 .build();
-
 
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK)
@@ -100,7 +84,7 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
             @Override
             public void onClick(View v) {
                 dialog.show();
-                image.takePicture(ContextCompat.getMainExecutor(getActivity()), callback);
+                image.takePicture(ContextCompat.getMainExecutor(ImageLabelingActivity.this), callback);
             }
         });
 
