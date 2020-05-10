@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.camera2.Camera2Config;
-import androidx.camera.core.AspectRatio;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraXConfig;
@@ -68,18 +68,20 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
     void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
         int rotation = viewfinder.getDisplay().getRotation();
         Preview preview = new Preview.Builder()
-//                .setTargetResolution(new Size(1920,1080))
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setTargetResolution(new Size(1920,1080))
+//                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .setTargetRotation(rotation)
                 .build();
+
+        preview.setSurfaceProvider(viewfinder.getPreviewSurfaceProvider());
 
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                 .build();
 
         ImageAnalysis analysisUseCase = new ImageAnalysis.Builder()
-//                .setTargetResolution(new Size(1920,1080))
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setTargetResolution(new Size(1920,1080))
+//                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .setTargetRotation(rotation)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build();
@@ -88,8 +90,8 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
 
         cameraProvider.unbindAll();
         try {
-            Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, analysisUseCase, preview);
-            preview.setSurfaceProvider(viewfinder.createSurfaceProvider(camera.getCameraInfo()));
+            Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, analysisUseCase);
+//            preview.setSurfaceProvider(viewfinder.createSurfaceProvider(camera.getCameraInfo()));
         } catch(Exception e) {
             Log.e(TAG, "Use case binding failed");
             e.printStackTrace();

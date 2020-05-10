@@ -1,29 +1,27 @@
 package net.machina.fieldgame;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.util.Size;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.camera2.Camera2Config;
-import androidx.camera.core.AspectRatio;
-import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraXConfig;
 import androidx.camera.core.ImageCapture;
-
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
-
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
@@ -33,8 +31,6 @@ import net.machina.fieldgame.imagelabeling.ImageReceivedListener;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import dmax.dialog.SpotsDialog;
 
 public class ImageLabelingActivity extends AppCompatActivity implements LifecycleOwner,  CameraXConfig.Provider, ImageReceivedListener {
 
@@ -50,7 +46,7 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_image_labeling);
         if(!checkPermissionsGranted()) ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
         callback = new ImageCaptureCallback();
@@ -58,7 +54,8 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
         previewView = findViewById(R.id.preview_view);
         btn = findViewById(R.id.btn_detect);
 
-        dialog = new SpotsDialog.Builder().setMessage("Proszę czekać ...").setCancelable(false).build();
+//        dialog = new SpotsDialog.Builder().setMessage("Proszę czekać ...").setCancelable(false).build();
+        dialog = new AlertDialog.Builder(ImageLabelingActivity.this).setMessage("Proszę czekać").setCancelable(false).create();
 
         cameraProviderFuture.addListener(() -> {
             try {
@@ -72,14 +69,23 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
 
     private void bindImageCapture(ProcessCameraProvider cameraProvider) {
         int rotation = previewView.getDisplay().getRotation();
-        Preview preview = new Preview.Builder().setTargetAspectRatio(AspectRatio.RATIO_16_9).setTargetRotation(rotation)
+        Preview preview = new Preview.Builder()
+                .setTargetResolution(new Size(1920,1080))
+//                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+//                .setTargetRotation(rotation)
                 .build();
+
+        preview.setSurfaceProvider(previewView.getPreviewSurfaceProvider());
 
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                 .build();
 
-        ImageCapture image = new ImageCapture.Builder().setTargetAspectRatio(AspectRatio.RATIO_16_9).setTargetRotation(rotation).build();
+        ImageCapture image = new ImageCapture.Builder()
+                .setTargetResolution(new Size(1920,1080))
+//                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+//                .setTargetRotation(rotation)
+                .build();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,9 +96,9 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
 
         cameraProvider.unbindAll();
         try {
-            Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview);
-            preview.setSurfaceProvider(previewView.createSurfaceProvider(camera.getCameraInfo()));
-
+//            Camera camera =
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, image);
+//            preview.setSurfaceProvider(previewView.createSurfaceProvider(camera.getCameraInfo()));
         } catch(Exception e) {
             Log.e(TAG, "Use case binding failed");
             e.printStackTrace();
