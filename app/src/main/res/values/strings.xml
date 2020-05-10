@@ -2,4 +2,5 @@
     <string name="app_name">FieldGame</string>
     <string name="button_qr_scanner">Start QR scanner</string>
     <string name="title_activity_maps">Map</string>
+    <string name="button_label_image">Wykryj Obiekt</string>
 </resources>
