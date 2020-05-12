@@ -6,15 +6,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.machina.fieldgame.data.Game;
+import net.machina.fieldgame.data.Riddle;
 import net.machina.fieldgame.network.FieldGameNetworkMiddleman;
 import net.machina.fieldgame.network.OnDataReceivedListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener, OnDataReceivedListener {
     private static final String TAG = "FieldGame/Game";
     public static final String KEY_GAME_DATA = "game_data";
+    private static final int IMAGE_LABELING_REQUEST = 2137;
+    private Riddle riddleObject;
+    List<Riddle> riddleList;
     private FieldGameNetworkMiddleman middleman;
     private Game game;
 
@@ -49,7 +61,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(GameActivity.this, MapsActivity.class));
                 break;
             case R.id.btnStartLabeler:
-                startActivity(new Intent(GameActivity.this, ImageLabelingActivity.class));
+                startActivityForResult(new Intent(GameActivity.this, ImageLabelingActivity.class), 2137);
                 break;
             case R.id.btnGameLogout:
                 finish();
@@ -60,7 +72,53 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == IMAGE_LABELING_REQUEST) {
+            if(resultCode == RESULT_OK) {
+                assert data != null;
+                ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
+                for(String labels: labelsList){
+                    if(labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT()))
+                        Toast.makeText(this, "Zagadka OK", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(this, "Zagadka nie OK", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    @Override
     public void onDataReceived(String result) {
-        //TODO: implement network access OR delete this activity
+        runOnUiThread(() ->{
+            try {
+                JSONObject obj = new JSONObject(result);
+                if(obj.has("riddles")){
+                    JSONArray riddles = obj.getJSONArray("riddles");
+                    JSONObject riddleObj;
+                    for(int i = 0; i < riddles.length(); i++){
+                        riddleObj = riddles.getJSONObject(i);
+                        Riddle riddle = new Riddle(
+                                riddleObj.getInt("riddle_no"),
+                                riddleObj.getString("description"),
+                                riddleObj.getDouble("latitude"),
+                                riddleObj.getDouble("longitude"),
+                                riddleObj.getInt("radius"),
+                                riddleObj.getString("dominant_object")
+                        );
+                        riddleList.add(riddle);
+                    }
+                    for(Riddle rid: riddleList){
+                        if(rid.getRIDDLE_NO() == 2){
+                            riddleObject = rid;
+                        }
+                    }
+                }
+                else{
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
