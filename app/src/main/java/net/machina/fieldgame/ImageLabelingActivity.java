@@ -2,6 +2,7 @@ package net.machina.fieldgame;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,12 +30,14 @@ import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
 import net.machina.fieldgame.imagelabeling.ImageCaptureCallback;
 import net.machina.fieldgame.imagelabeling.ImageReceivedListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ImageLabelingActivity extends AppCompatActivity implements LifecycleOwner,  CameraXConfig.Provider, ImageReceivedListener {
 
     private static final String TAG = "FieldGame/ImageLabeling";
+    public static final String KEY_DATA = "labels";
     private int REQUEST_CODE_PERMISSIONS = 0xf1e1d;
     private String[] REQUIRED_PERMISSIONS = {Manifest.permission.CAMERA};
     private PreviewView previewView;
@@ -120,10 +123,15 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
 
     @Override
     public void onImageReceived(List<FirebaseVisionImageLabel> label) {
+        ArrayList<String> labelsList = new ArrayList<String>();
         if(label != null){
             for(FirebaseVisionImageLabel labels: label){
-                Toast.makeText(this, "Result" + labels.getText() + " " + labels.getConfidence(), Toast.LENGTH_SHORT).show();
+                labelsList.add(labels.getText());
             }
+            Intent resultIntent = new Intent();
+            resultIntent.putStringArrayListExtra(KEY_DATA, labelsList);
+            setResult(RESULT_OK, resultIntent);
+            finish();
             if(dialog.isShowing())
                 dialog.dismiss();
         }

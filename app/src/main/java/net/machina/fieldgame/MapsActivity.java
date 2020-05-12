@@ -1,5 +1,6 @@
 package net.machina.fieldgame;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -32,6 +33,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +51,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private final long MIN_REFRESH_TIME = 1000;
     private final long MIN_REFRESH_DISTANCE = 1;
+    private static final int IMAGE_LABELING_REQUEST = 2137;
+    private static final String KEY_DATA = "labels";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,5 +168,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == IMAGE_LABELING_REQUEST) {
+            if(resultCode == RESULT_OK) {
+                    assert data != null;
+                    ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
+                    for(String labels: labelsList){
+                        if(labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT()))
+                            Toast.makeText(this, "Zagadka OK", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(this, "Zagadka nie OK", Toast.LENGTH_SHORT).show();
+                    }
+            }
+        }
     }
 }
