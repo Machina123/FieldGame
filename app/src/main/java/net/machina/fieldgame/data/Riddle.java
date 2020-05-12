@@ -1,4 +1,4 @@
-package net.machina.fieldgame.Data;
+package net.machina.fieldgame.data;
 
 public class Riddle {
 
