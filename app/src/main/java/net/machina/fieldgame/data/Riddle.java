@@ -1,6 +1,8 @@
 package net.machina.fieldgame.data;
 
-public class Riddle {
+import java.io.Serializable;
+
+public class Riddle implements Serializable {
 
     private int RIDDLE_NO;
     private String RIDDLE_DESCRIPTION;

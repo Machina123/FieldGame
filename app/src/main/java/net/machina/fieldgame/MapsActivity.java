@@ -2,12 +2,14 @@ package net.machina.fieldgame;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import net.machina.fieldgame.data.Game;
+import net.machina.fieldgame.data.GameStatus;
 import net.machina.fieldgame.data.Riddle;
 import net.machina.fieldgame.maps.LocationHandler;
 import net.machina.fieldgame.maps.MarkersHandler;
@@ -37,27 +40,27 @@ import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, OnDataReceivedListener {
 
+    public static final String KEY_GAME_DATA = "game_data";
+    public static final String KEY_GAME_STATUS_DATA = "game_status_data";
+    public static final String KEY_RIDDLES_DATA = "riddles_data";
+    public static final String KEY_GAME_FINISHED = "finished";
     private static final String TAG = " tak";
+    private static final int IMAGE_LABELING_REQUEST = 2137;
+    private static final String KEY_DATA = "labels";
+    private final String SUCCESS_MASSAGE = "Brawo udało Ci sie znaleść odpowiedni obiekt";
+    private final String FAILED_MASSAGE = "Niestedy nie o ten obiekt chodziło. Szukaj dalej.";
+    private final long MIN_REFRESH_TIME = 1000;
+    private final long MIN_REFRESH_DISTANCE = 1;
     private GoogleMap mMap;
     private LocationListener locationListener;
     private LocationManager locationManager;
-
     private FieldGameNetworkMiddleman middleman;
     private Button take_picture_btn;
     private List<Riddle> riddleList;
     private Riddle riddleObject;
     private Game game;
-    private int riddleNumber;
-
-    private final String SUCCESS_MASSAGE = "Brawo udało Ci sie znaleść odpowiedni obiekt";
-    private final String FAILED_MASSAGE = "Niestedy nie o ten obiekt chodziło. Szukaj dalej.";
+    private GameStatus gameStatus;
     private Boolean found_object = false;
-
-    private final long MIN_REFRESH_TIME = 1000;
-    private final long MIN_REFRESH_DISTANCE = 1;
-    private static final int IMAGE_LABELING_REQUEST = 2137;
-    private static final String KEY_DATA = "labels";
-    public static final String KEY_GAME_DATA = "game_data";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,22 +71,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         middleman = FieldGameNetworkMiddleman.getInstance();
+        middleman.refreshToken(this);
         riddleList = new ArrayList<>();
         take_picture_btn = findViewById(R.id.btn_goto_labelactivity);
         take_picture_btn.setOnClickListener(this);
         findViewById(R.id.description_button).setOnClickListener(this);
         take_picture_btn.setVisibility(View.GONE);
 
+
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
+        if (extras != null) {
             game = (Game) extras.getSerializable(KEY_GAME_DATA);
+            gameStatus = (GameStatus) extras.getSerializable(KEY_GAME_STATUS_DATA);
+            riddleObject = (Riddle) extras.getSerializable(KEY_RIDDLES_DATA);
             Log.d(TAG, game.toString());
         } else {
             Toast.makeText(this, "Nieprawidłowe wywołanie", Toast.LENGTH_SHORT).show();
         }
-
-        middleman.getRiddlesForGame(game.getGameID(), this);
-        middleman.getProgressForGame(game.getGameID(), this);
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
@@ -99,19 +103,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onLocationChanged(Location location) {
-                riddle.updatePosition(riddleObject.getRIDDLE_LATITUDE(), riddleObject.getRIDDLE_LONGITUDE());
-                riddle.DrawMarker(mMap);
-                playerPosition.updatePosition(location.getLatitude(), location.getLongitude());
-                playerPosition.DrawMarker(mMap);
+                new Handler().postDelayed(() -> {
+                    riddle.updatePosition(riddleObject.getRIDDLE_LATITUDE(), riddleObject.getRIDDLE_LONGITUDE());
+                    riddle.DrawMarker(mMap);
+                    playerPosition.updatePosition(location.getLatitude(), location.getLongitude());
+                    playerPosition.DrawMarker(mMap);
 
-                Location riddleLocation = new LocationHandler(riddle.getLatLng()).getLocation();
+                    Location riddleLocation = new LocationHandler(riddle.getLatLng()).getLocation();
 
 
-                if(location.distanceTo(riddleLocation) <= riddleObject.getRIDDLE_RADIUS()){
-                    riddle.DrawSearchingArea(mMap, riddleObject.getRIDDLE_RADIUS());
-                    take_picture_btn.setVisibility(View.VISIBLE);
+                    if (location.distanceTo(riddleLocation) <= riddleObject.getRIDDLE_RADIUS()) {
+                        riddle.DrawSearchingArea(mMap, riddleObject.getRIDDLE_RADIUS());
+                        take_picture_btn.setVisibility(View.VISIBLE);
 
-                }
+                    }
+                }, 1000);
 
             }
 
@@ -132,16 +138,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         };
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        try{
+        try {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_REFRESH_TIME, MIN_REFRESH_DISTANCE, locationListener);
-        }catch(SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_goto_labelactivity:
                 startActivityForResult(new Intent(MapsActivity.this, ImageLabelingActivity.class), IMAGE_LABELING_REQUEST);
                 break;
@@ -151,63 +157,60 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onDataReceived(String result) {
-        runOnUiThread(() ->{
-            try {
-                JSONObject obj = new JSONObject(result);
-                if(obj.has("riddles")){
-                    JSONArray riddles = obj.getJSONArray("riddles");
-                    JSONObject riddleObj;
-                    for(int i = 0; i < riddles.length(); i++){
-                        riddleObj = riddles.getJSONObject(i);
-                        Riddle riddle = new Riddle(
-                          riddleObj.getInt("riddle_no"),
-                          riddleObj.getString("description"),
-                          riddleObj.getDouble("latitude"),
-                          riddleObj.getDouble("longitude"),
-                          riddleObj.getInt("radius"),
-                          riddleObj.getString("dominant_object")
-                        );
-                        riddleList.add(riddle);
-                    }
-                    for(Riddle rid: riddleList){
-                        if(rid.getRIDDLE_NO() == 2){
-                            riddleObject = rid;
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_LABELING_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
+                    for (String labels : labelsList) {
+                        if (labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT())) {
+                            middleman.advanceGame(game.getGameID(), this);
+                            new AlertDialog.Builder(this).setMessage(SUCCESS_MASSAGE).setPositiveButton("OK", null).show();
+                            found_object = true;
                         }
                     }
+                    if (!found_object)
+                        new AlertDialog.Builder(this).setMessage(FAILED_MASSAGE).setPositiveButton("OK", null).show();
+                    else
+                        found_object = false;
                 }
-                else if(obj.has("game_data")){
-                    JSONArray game_data = obj.getJSONArray("game_data");
-                    JSONObject gameData = game_data.getJSONObject(0);
-                    riddleNumber = gameData.getInt("current_riddle");
-                    Toast.makeText(this, "Obecna zagadka " + riddleNumber, Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-        });
+        }
+    }
+
+    public void isFinished(Boolean finished, String message) {
+        if (finished) {
+            new AlertDialog.Builder(this)
+                    .setMessage(message)
+                    .setPositiveButton("OK", (dialog, which) ->{
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra(KEY_GAME_FINISHED, true);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    })
+                    .show();
+        }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == IMAGE_LABELING_REQUEST) {
-            if(resultCode == RESULT_OK) {
-                    if(data != null) {
-                        ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
-                        for (String labels : labelsList) {
-                            if (labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT())) {
-                                middleman.advanceGame(1, this);
-                                new AlertDialog.Builder(this).setMessage(SUCCESS_MASSAGE).setPositiveButton("OK", null).show();
-                                found_object = true;
-                            }
-                        }
-                        if(!found_object)
-                            new AlertDialog.Builder(this).setMessage(FAILED_MASSAGE).setPositiveButton("OK", null).show();
-                        else
-                            found_object = false;
-                    }
+    public void onDataReceived(String result) {
+        try {
+            JSONObject obj = new JSONObject(result);
+            if (obj.has("game_data")) {
+                JSONArray game_data = obj.getJSONArray("game_data");
+                JSONObject gameData = game_data.getJSONObject(0);
+                gameStatus = new GameStatus(
+                        gameData.getInt("current_riddle"),
+                        gameData.getBoolean("finished")
+                );
+                isFinished(gameStatus.getFinished(), "Gra została ukończona");
+            } else if (obj.has("access_token")) {
+                Log.d(TAG, "Access token refreshed");
+                // Token Refresh
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }
