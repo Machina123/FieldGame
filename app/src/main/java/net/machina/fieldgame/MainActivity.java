@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(obj.has("message")) {
                     if(obj.getString("message").toLowerCase().contains("logged in")) { // Lggged in as...
                         Toast.makeText(MainActivity.this, "Zalogowano pomyślnie", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(MainActivity.this, GameActivity.class));
+                        startActivity(new Intent(MainActivity.this, GameListActivity.class));
                     } else if(obj.getString("message").toLowerCase().contains("credentials")) { // Wrong credentials
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("Błąd")
@@ -106,24 +106,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             findViewById(R.id.txtPassword).setEnabled(true);
         });
     }
-    //    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(requestCode == CODE_QR_REQUEST) {
-//            switch(resultCode) {
-//                case RESULT_CANCELED:
-//                    Toast.makeText(this, "Code scanning cancelled by user", Toast.LENGTH_SHORT).show();
-//                    break;
-//                case RESULT_OK:
-//                    if(data != null) {
-//                        Toast.makeText(this, "Successfully read QR Code: " + data.getStringExtra(ScannerActivity.KEY_DATA), Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(this, "No data returned", Toast.LENGTH_SHORT).show();
-//                    }
-//                    break;
-//                default:
-//                    Toast.makeText(this, "Unknown result", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
 }

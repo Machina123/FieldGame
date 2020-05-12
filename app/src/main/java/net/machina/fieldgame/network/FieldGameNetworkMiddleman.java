@@ -122,6 +122,14 @@ public class FieldGameNetworkMiddleman {
         sendRequest(req, listener);
     }
 
+    public void getMyProgress(final OnDataReceivedListener listener) {
+        Request req = new Request.Builder()
+                .url(APIDetails.ENDPOINT_MY_GAMES)
+                .get()
+                .build();
+        sendRequest(req, listener);
+    }
+
     private void sendRequest(Request req, final OnDataReceivedListener listener) {
         try {
             httpClient.newCall(req).enqueue(new Callback() {
