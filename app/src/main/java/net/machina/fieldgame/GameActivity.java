@@ -34,7 +34,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             game = (Game) extras.getSerializable(KEY_GAME_DATA);
@@ -48,6 +47,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btnStartMap).setOnClickListener(this);
         findViewById(R.id.btnStartLabeler).setOnClickListener(this);
         findViewById(R.id.btnGameLogout).setOnClickListener(this);
+        middleman.getRiddlesForGame(1, this);
     }
 
 
