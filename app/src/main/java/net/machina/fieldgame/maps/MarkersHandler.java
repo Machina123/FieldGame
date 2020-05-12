@@ -11,18 +11,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MarkersHandler {
 
     private LatLng latLng;
-    private double latitude, longitude;
     private String title;
 
-    public MarkersHandler(double lat, double lon, String title){
-        this.latitude = lat;
-        this.longitude = lon;
+    public MarkersHandler(String title){
         this.title = title;
+        latLng = new LatLng(-54, 151);
     }
 
-    public void CreateNewLatLng(){
-        latLng = new LatLng(latitude, longitude);
+    public void updatePosition(double lat, double lon){
+        this.latLng = new LatLng(lat, lon);
     }
+
 
     public void DrawMarker(GoogleMap map){
         map.addMarker(new MarkerOptions().position(latLng).title(title));
