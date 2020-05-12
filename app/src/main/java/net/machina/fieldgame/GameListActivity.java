@@ -88,15 +88,17 @@ public class GameListActivity extends AppCompatActivity implements OnDataReceive
                         gameList.add(game);
                         adapter.notifyDataSetChanged();
                     }
-                } else if(obj.has("message")) { // komunikat
+                } else if(obj.has("message") && obj.getString("message").contains("revoked")) {
+                    finish();
+                } else if(obj.has("access_token")) {
+                    Log.d(TAG, "Access token refreshed");
+                    // Token Refresh
+                } else {
                     new AlertDialog.Builder(GameListActivity.this)
                             .setTitle(R.string.dialog_title_error)
                             .setMessage(R.string.dialog_body_unexpected_error_occured)
                             .setNeutralButton(R.string.button_ok, null)
                             .show();
-                } else if(obj.has("access_token")) {
-                    Log.d(TAG, "Access token refreshed");
-                    // Token Refresh
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -106,7 +108,9 @@ public class GameListActivity extends AppCompatActivity implements OnDataReceive
 
     @Override
     public void onGameSelected(Game game) {
-
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra(GameActivity.KEY_GAME_DATA, game);
+        startActivity(intent);
     }
 
     @Override
@@ -143,5 +147,17 @@ public class GameListActivity extends AppCompatActivity implements OnDataReceive
                 }
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(GameListActivity.this)
+                .setTitle("Uwaga")
+                .setMessage("Na pewno chcesz się wylogować?")
+                .setPositiveButton("Tak", (dialog, which) -> {
+                    middleman.logout(this);
+                })
+                .setNegativeButton("Nie", null)
+                .show();
     }
 }

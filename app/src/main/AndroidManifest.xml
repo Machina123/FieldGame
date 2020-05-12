@@ -22,11 +22,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GameListActivity"></activity>
-        <activity android:name=".GameActivity" />
+        <activity android:name=".GameListActivity"
+            android:screenOrientation="nosensor"/>
+        <activity android:name=".GameActivity"
+            android:screenOrientation="nosensor"/>
         <activity
             android:name=".RegisterActivity"
-            android:label="@string/title_registration" />
+            android:label="@string/title_registration"
+            android:screenOrientation="nosensor" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -41,22 +44,27 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="nosensor"/>
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode, label" />
 
-        <activity android:name=".ImageLabelingActivity" />
+        <activity android:name=".ImageLabelingActivity"
+            android:screenOrientation="nosensor"/>
         <activity
             android:name=".ScannerActivity"
-            android:label="@string/title_qr_scanner" />
+            android:label="@string/title_qr_scanner"
+            android:screenOrientation="nosensor"/>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_login" />
+            android:label="@string/title_login"
+            android:screenOrientation="nosensor"/>
         <activity
             android:name=".SplashScreenActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
