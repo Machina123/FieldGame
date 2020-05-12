@@ -123,7 +123,7 @@ public class ImageLabelingActivity extends AppCompatActivity implements Lifecycl
 
     @Override
     public void onImageReceived(List<FirebaseVisionImageLabel> label) {
-        ArrayList<String> labelsList = new ArrayList<String>();
+        ArrayList<String> labelsList = new ArrayList<>();
         if(label != null){
             for(FirebaseVisionImageLabel labels: label){
                 labelsList.add(labels.getText());

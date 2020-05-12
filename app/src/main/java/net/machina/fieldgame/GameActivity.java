@@ -24,9 +24,10 @@ import java.util.List;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener, OnDataReceivedListener {
     private static final String TAG = "FieldGame/Game";
     public static final String KEY_GAME_DATA = "game_data";
+    private static final String KEY_IMAGE_LABELING_DATA = "labels";
     private static final int IMAGE_LABELING_REQUEST = 2137;
+    private List<Riddle> riddleList;
     private Riddle riddleObject;
-    List<Riddle> riddleList;
     private FieldGameNetworkMiddleman middleman;
     private Game game;
 
@@ -34,6 +35,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             game = (Game) extras.getSerializable(KEY_GAME_DATA);
@@ -48,6 +50,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btnStartLabeler).setOnClickListener(this);
         findViewById(R.id.btnGameLogout).setOnClickListener(this);
         middleman.getRiddlesForGame(1, this);
+        riddleList = new ArrayList<>();
     }
 
 
@@ -61,7 +64,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(GameActivity.this, MapsActivity.class));
                 break;
             case R.id.btnStartLabeler:
-                startActivityForResult(new Intent(GameActivity.this, ImageLabelingActivity.class), 2137);
+                startActivityForResult(new Intent(GameActivity.this, ImageLabelingActivity.class), IMAGE_LABELING_REQUEST);
                 break;
             case R.id.btnGameLogout:
                 finish();
@@ -71,22 +74,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == IMAGE_LABELING_REQUEST) {
-            if(resultCode == RESULT_OK) {
-                assert data != null;
-                ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
-                for(String labels: labelsList){
-                    if(labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT()))
-                        Toast.makeText(this, "Zagadka OK", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(this, "Zagadka nie OK", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
 
     @Override
     public void onDataReceived(String result) {
@@ -120,5 +107,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == IMAGE_LABELING_REQUEST) {
+            if(resultCode == RESULT_OK) {
+                if(data != null){
+                    ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
+                    for(String labels: labelsList){
+                        if(labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT()))
+                            Toast.makeText(this, "Zagadka OK", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(this, "Zagadka nie OK", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
     }
 }

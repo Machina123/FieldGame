@@ -41,7 +41,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private FieldGameNetworkMiddleman middleman;
     private Button take_picture_btn;
-    List<Riddle> riddleList;
+    private List<Riddle> riddleList;
     private Riddle riddleObject;
 
     private final long MIN_REFRESH_TIME = 1000;
@@ -124,7 +124,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_goto_labelactivity:
-                startActivity(new Intent(MapsActivity.this, ImageLabelingActivity.class));
+                startActivityForResult(new Intent(MapsActivity.this, ImageLabelingActivity.class), IMAGE_LABELING_REQUEST);
                 break;
             case R.id.description_button:
                 new AlertDialog.Builder(this).setMessage(riddleObject.getRIDDLE_DESCRIPTION()).setPositiveButton("OK", null).show();
@@ -170,13 +170,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == IMAGE_LABELING_REQUEST) {
             if(resultCode == RESULT_OK) {
-                    assert data != null;
-                    ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
-                    for(String labels: labelsList){
-                        if(labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT()))
-                            Toast.makeText(this, "Zagadka OK", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(this, "Zagadka nie OK", Toast.LENGTH_SHORT).show();
+                    if(data != null) {
+                        ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
+                        for (String labels : labelsList) {
+                            if (labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT()))
+                                Toast.makeText(this, "Zagadka OK", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(this, "Zagadka nie OK", Toast.LENGTH_SHORT).show();
+                        }
                     }
             }
         }
