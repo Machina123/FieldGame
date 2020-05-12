@@ -1,5 +1,6 @@
 package net.machina.fieldgame;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +26,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "FieldGame/Game";
     public static final String KEY_GAME_DATA = "game_data";
     private static final String KEY_IMAGE_LABELING_DATA = "labels";
+    private final String SUCCESS_MASSAGE = "Brawo udało Ci sie znaleść odpowiedni obiekt";
+    private final String FAILED_MASSAGE = "Niestedy nie o ten obiekt chodziło. Szukaj dalej.";
+    private Boolean found_object = false;
     private static final int IMAGE_LABELING_REQUEST = 2137;
     private List<Riddle> riddleList;
     private Riddle riddleObject;
@@ -61,7 +65,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(GameActivity.this, ScannerActivity.class));
                 break;
             case R.id.btnStartMap:
-                startActivity(new Intent(GameActivity.this, MapsActivity.class));
+                startActivity(new Intent(GameActivity.this, MapsActivity.class).putExtra(MapsActivity.KEY_GAME_DATA, game));
                 break;
             case R.id.btnStartLabeler:
                 startActivityForResult(new Intent(GameActivity.this, ImageLabelingActivity.class), IMAGE_LABELING_REQUEST);
@@ -117,11 +121,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if(data != null){
                     ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
                     for(String labels: labelsList){
-                        if(labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT()))
-                            Toast.makeText(this, "Zagadka OK", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(this, "Zagadka nie OK", Toast.LENGTH_SHORT).show();
+                        if(labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT())) {
+                            middleman.advanceGame(1, this);
+                            new AlertDialog.Builder(this).setMessage(SUCCESS_MASSAGE).setPositiveButton("OK", null).show();
+                        }
                     }
+                    if(!found_object)
+                        new AlertDialog.Builder(this).setMessage(FAILED_MASSAGE).setPositiveButton("OK", null).show();
+                    else
+                        found_object = false;
                 }
             }
         }

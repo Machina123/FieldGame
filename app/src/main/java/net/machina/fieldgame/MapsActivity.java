@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import net.machina.fieldgame.data.Game;
 import net.machina.fieldgame.data.Riddle;
 import net.machina.fieldgame.maps.LocationHandler;
 import net.machina.fieldgame.maps.MarkersHandler;
@@ -35,6 +37,7 @@ import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, OnDataReceivedListener {
 
+    private static final String TAG = " tak";
     private GoogleMap mMap;
     private LocationListener locationListener;
     private LocationManager locationManager;
@@ -43,11 +46,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button take_picture_btn;
     private List<Riddle> riddleList;
     private Riddle riddleObject;
+    private Game game;
+    private int riddleNumber;
+
+    private final String SUCCESS_MASSAGE = "Brawo udało Ci sie znaleść odpowiedni obiekt";
+    private final String FAILED_MASSAGE = "Niestedy nie o ten obiekt chodziło. Szukaj dalej.";
+    private Boolean found_object = false;
 
     private final long MIN_REFRESH_TIME = 1000;
     private final long MIN_REFRESH_DISTANCE = 1;
     private static final int IMAGE_LABELING_REQUEST = 2137;
     private static final String KEY_DATA = "labels";
+    public static final String KEY_GAME_DATA = "game_data";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +68,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         middleman = FieldGameNetworkMiddleman.getInstance();
-        middleman.getRiddlesForGame(1, this);
         riddleList = new ArrayList<>();
         take_picture_btn = findViewById(R.id.btn_goto_labelactivity);
         take_picture_btn.setOnClickListener(this);
         findViewById(R.id.description_button).setOnClickListener(this);
         take_picture_btn.setVisibility(View.GONE);
 
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            game = (Game) extras.getSerializable(KEY_GAME_DATA);
+            Log.d(TAG, game.toString());
+        } else {
+            Toast.makeText(this, "Nieprawidłowe wywołanie", Toast.LENGTH_SHORT).show();
+        }
+
+        middleman.getRiddlesForGame(game.getGameID(), this);
+        middleman.getProgressForGame(game.getGameID(), this);
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
@@ -157,7 +176,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                 }
-                else{
+                else if(obj.has("game_data")){
+                    JSONArray game_data = obj.getJSONArray("game_data");
+                    JSONObject gameData = game_data.getJSONObject(0);
+                    riddleNumber = gameData.getInt("current_riddle");
+                    Toast.makeText(this, "Obecna zagadka " + riddleNumber, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -173,11 +196,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if(data != null) {
                         ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
                         for (String labels : labelsList) {
-                            if (labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT()))
-                                Toast.makeText(this, "Zagadka OK", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(this, "Zagadka nie OK", Toast.LENGTH_SHORT).show();
+                            if (labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT())) {
+                                middleman.advanceGame(1, this);
+                                new AlertDialog.Builder(this).setMessage(SUCCESS_MASSAGE).setPositiveButton("OK", null).show();
+                                found_object = true;
+                            }
                         }
+                        if(!found_object)
+                            new AlertDialog.Builder(this).setMessage(FAILED_MASSAGE).setPositiveButton("OK", null).show();
+                        else
+                            found_object = false;
                     }
             }
         }
