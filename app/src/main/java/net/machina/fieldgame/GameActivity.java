@@ -113,7 +113,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     for (Riddle rid : riddleList) {
 
-                        if (rid.getRIDDLE_NO() == gameStatus.getCurrentRiddle()) {
+                        if (rid.getRiddleNo() == gameStatus.getCurrentRiddle()) {
                             riddleObject = rid;
                         }
                     }
@@ -144,7 +144,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if(data != null){
                     ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
                     for(String labels: labelsList){
-                        if(labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT())) {
+                        if(labels.contains(riddleObject.getRiddleDominantObject())) {
                             middleman.advanceGame(1, this);
                             new AlertDialog.Builder(this).setMessage(SUCCESS_MASSAGE).setPositiveButton("OK", null).show();
                         }

@@ -2,45 +2,105 @@ package net.machina.fieldgame.data;
 
 import java.io.Serializable;
 
+/**
+ * Klasa przechowująca informację o obecnej zagadce
+ * @author Patryk Ciepiela, Bartłomiej Gil
+ */
 public class Riddle implements Serializable {
 
-    private int RIDDLE_NO;
-    private String RIDDLE_DESCRIPTION;
-    private double RIDDLE_LATITUDE;
-    private double RIDDLE_LONGITUDE;
-    private int RIDDLE_RADIUS;
-    private String RIDDLE_DOMINANT_OBJECT;
+    /**
+     * Numer zagadki
+     */
+    private int riddleNo;
 
+    /**
+     * Opis zagadki
+     */
+    private String riddleDescription;
+
+    /**
+     * Szerokość geograficzna miejsca zawierającego przedmiot zagadki
+     */
+    private double riddleLatitude;
+
+    /**
+     * Długość geograficzna miejsca zawierającego przedmiot zagadki
+     */
+    private double riddleLongitude;
+
+    /**
+     * Promień obszaru poszukiwań
+     */
+    private int riddleRadius;
+
+    /**
+     * Opis przedmiotu zagadki zwracany przez Firebase ML Kit
+     */
+    private String riddleDominantObject;
+
+    /**
+     * Konstruktor obiektu
+     * @param riddle_no Numer zagadki
+     * @param description Opis zagadki
+     * @param latitude Szerokość geograficzna miejsca zawierającego przedmiot zagadki
+     * @param longitude Długość geograficzna miejsca zawierającego przedmiot zagadki
+     * @param radius Promień obszaru poszukiwań
+     * @param dominant_object Opis przedmiotu zagadki zwracany przez Firebase ML Kit
+     */
     public Riddle(int riddle_no, String description, double latitude, double longitude, int radius, String dominant_object){
-        this.RIDDLE_NO = riddle_no;
-        this.RIDDLE_DESCRIPTION = description;
-        this.RIDDLE_LATITUDE = latitude;
-        this.RIDDLE_LONGITUDE = longitude;
-        this.RIDDLE_RADIUS = radius;
-        this.RIDDLE_DOMINANT_OBJECT = dominant_object;
+        this.riddleNo = riddle_no;
+        this.riddleDescription = description;
+        this.riddleLatitude = latitude;
+        this.riddleLongitude = longitude;
+        this.riddleRadius = radius;
+        this.riddleDominantObject = dominant_object;
     }
 
-    public int getRIDDLE_NO() {
-        return RIDDLE_NO;
+    /**
+     * Pobieranie numeru zagadki
+     * @return {@link #riddleNo Numer zagadki}
+     */
+    public int getRiddleNo() {
+        return riddleNo;
     }
 
-    public String getRIDDLE_DESCRIPTION() {
-        return RIDDLE_DESCRIPTION;
+    /**
+     * Pobieranie opisu zagadki
+     * @return {@link #riddleDescription Opis zagadki}
+     */
+    public String getRiddleDescription() {
+        return riddleDescription;
     }
 
-    public double getRIDDLE_LATITUDE() {
-        return RIDDLE_LATITUDE;
+    /**
+     * Pobieranie szerokośi geograficznej miejsca zawierającego przedmiot zagadki
+     * @return {@link #riddleLatitude Szerokość geograficzna miejsca zawierającego przedmiot zagadki}
+     */
+    public double getRiddleLatitude() {
+        return riddleLatitude;
     }
 
-    public double getRIDDLE_LONGITUDE() {
-        return RIDDLE_LONGITUDE;
+    /**
+     * Pobieranie długości geograficznej miejsca zawierającego przedmiot zagadki
+     * @return {@link #riddleLongitude Długość geograficzna miejsca zawierającego przedmiot zagadki}
+     */
+    public double getRiddleLongitude() {
+        return riddleLongitude;
     }
 
-    public int getRIDDLE_RADIUS() {
-        return RIDDLE_RADIUS;
+    /**
+     * Pobieranie promienia obszaru poszukiwań
+     * @return {@link #riddleRadius Obszar poszukiwań}
+     */
+    public int getRiddleRadius() {
+        return riddleRadius;
     }
 
-    public String getRIDDLE_DOMINANT_OBJECT() {
-        return RIDDLE_DOMINANT_OBJECT;
+    /**
+     * Pobieranie opisu przedmiotu zagadki
+     * @return {@link #riddleDominantObject Opis przedmiotu zagadki}
+     */
+    public String getRiddleDominantObject() {
+        return riddleDominantObject;
     }
 }

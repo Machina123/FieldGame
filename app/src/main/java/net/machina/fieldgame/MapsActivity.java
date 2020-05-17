@@ -2,7 +2,6 @@ package net.machina.fieldgame;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -104,7 +103,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onLocationChanged(Location location) {
                 new Handler().postDelayed(() -> {
-                    riddle.updatePosition(riddleObject.getRIDDLE_LATITUDE(), riddleObject.getRIDDLE_LONGITUDE());
+                    riddle.updatePosition(riddleObject.getRiddleLatitude(), riddleObject.getRiddleLongitude());
                     riddle.DrawMarker(mMap);
                     playerPosition.updatePosition(location.getLatitude(), location.getLongitude());
                     playerPosition.DrawMarker(mMap);
@@ -112,8 +111,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Location riddleLocation = new LocationHandler(riddle.getLatLng()).getLocation();
 
 
-                    if (location.distanceTo(riddleLocation) <= riddleObject.getRIDDLE_RADIUS()) {
-                        riddle.DrawSearchingArea(mMap, riddleObject.getRIDDLE_RADIUS());
+                    if (location.distanceTo(riddleLocation) <= riddleObject.getRiddleRadius()) {
+                        riddle.DrawSearchingArea(mMap, riddleObject.getRiddleRadius());
                         take_picture_btn.setVisibility(View.VISIBLE);
 
                     }
@@ -152,7 +151,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivityForResult(new Intent(MapsActivity.this, ImageLabelingActivity.class), IMAGE_LABELING_REQUEST);
                 break;
             case R.id.description_button:
-                new AlertDialog.Builder(this).setMessage(riddleObject.getRIDDLE_DESCRIPTION()).setPositiveButton("OK", null).show();
+                new AlertDialog.Builder(this).setMessage(riddleObject.getRiddleDescription()).setPositiveButton("OK", null).show();
         }
     }
 
@@ -164,7 +163,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (data != null) {
                     ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
                     for (String labels : labelsList) {
-                        if (labels.contains(riddleObject.getRIDDLE_DOMINANT_OBJECT())) {
+                        if (labels.contains(riddleObject.getRiddleDominantObject())) {
                             middleman.advanceGame(game.getGameID(), this);
                             new AlertDialog.Builder(this).setMessage(SUCCESS_MASSAGE).setPositiveButton("OK", null).show();
                             found_object = true;

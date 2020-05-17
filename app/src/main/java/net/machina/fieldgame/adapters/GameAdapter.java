@@ -16,9 +16,16 @@ import net.machina.fieldgame.data.Game;
 
 import java.util.List;
 
+/**
+ * Adapter widoku listy wykorzystywany do wyświetlania lisy gier, do których dołączył użytkownik
+ */
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
 
+    /**
+     * "Uchwyt widoku" pojedynczego elementu listy przechowujący referencje do kontrolek interfejsu użytkownika
+     */
     class GameViewHolder extends RecyclerView.ViewHolder {
+
         CardView cardView;
         TextView txtGameTitle, txtGameDescription, txtGameRiddleCount;
 
@@ -31,18 +38,41 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
         }
     }
 
+    /**
+     * Lista widocznych gier
+     */
     private List<Game> gameList;
+
+    /**
+     * Referencja do klasy nasłuchującej wybór gry przez użytkownika
+     */
     private GameSelectedListener listener;
+
+    /**
+     * Referencja do kontekstu
+     */
     private Context context;
 
+    /**
+     * Ustawianie referencji do kontekstu
+     * @param context Kontekst
+     */
     public void setContext(Context context) {
         this.context = context;
     }
 
+    /**
+     * Ustawienie referencji do klasy nasłuchującej wybór gry przez użytkownika
+     * @param listener Referencja do klasy nasłuchującej
+     */
     public void setListener(GameSelectedListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Konstruktor obiektu
+     * @param gameList Lista gier do pokazania
+     */
     public GameAdapter(List<Game> gameList) {
         this.gameList = gameList;
     }
@@ -54,6 +84,11 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
         return new GameViewHolder(v);
     }
 
+    /**
+     * Metoda wywoływana podczas dowiązania uchwytu widoku - ustawia zawartość kontrolek
+     * @param holder Uchwyt widoku pojedynczego elementu listy
+     * @param position Pozycja elementu na liście
+     */
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
