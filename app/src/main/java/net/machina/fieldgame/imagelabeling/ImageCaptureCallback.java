@@ -17,18 +17,37 @@ import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 
 import net.machina.fieldgame.connectingcheck.InternetCheck;
-
 import java.util.List;
 
+/**
+ * Klasa obsługująca analize i przetwarzanie obrazu otrzymanego robienia zdjęcia.
+ */
 public class ImageCaptureCallback extends ImageCapture.OnImageCapturedCallback {
 
+    /**
+     * Etykieta identyfikująca wpis w dzienniku.
+     */
     private static final String TAG = "FieldGame/ImageLabeling";
+
+    /**
+     * Obiekt typu {@link ImageReceivedListener}.
+     */
     private ImageReceivedListener imageReceivedListener;
 
+    /**
+     * Metoda inicjalizująca {@link ImageReceivedListener} dla obiektu tej klasy.
+     * @param imageReceivedListener okiekt {@link ImageReceivedListener} który ma zostać przypisany do tego obiektu.
+     */
     public void setImageReceivedListener(ImageReceivedListener imageReceivedListener){
         this.imageReceivedListener = imageReceivedListener;
     }
 
+    /**
+     * Metoda zwracająca obiekt typu FirebaseVisionImageMetadata zawierający orientację zdjęcia w zależności od
+     * orientacji aparatu przy robieniu zdjęcia.
+     * @param degrees orientację zdjęcia podanych w stopniach. Fukcja przyjmuje wartosci 0, 90, 180, 270
+     * @return         obiekt typu FirebaseVisionImageMetadata zawierajacy orientację zdjęcia w stopniach
+     */
     private int degreesToFirebaseRotation(int degrees) {
         switch (degrees) {
             case 0:
@@ -45,6 +64,13 @@ public class ImageCaptureCallback extends ImageCapture.OnImageCapturedCallback {
         }
     }
 
+    /**
+     * Jest wywoływana w momencie gdy zdjęcie zostanie zrobione poprawnie.
+     * Przetwarza otrzymane zdjęcie na obiekt typu Image a następnie odpytuje baze Firebase o liste etykiet pasujących
+     * do wykonanego zdjęcia i przekazuję ją do obiektu typu {@link ImageReceivedListener}.
+     * W przypadku gdy operacja sie nie powiedzie fukcja zwraca wyjątek na standardowe wyjście diagnostyczne.
+     * @param proxyImage obraz uzyskany podczas robienia zdjęcia
+     */
     @Override
     @androidx.camera.core.ExperimentalGetImage
     public void onCaptureSuccess(@NonNull ImageProxy proxyImage) {
@@ -75,6 +101,10 @@ public class ImageCaptureCallback extends ImageCapture.OnImageCapturedCallback {
         });
     }
 
+    /**
+     * Zwraca wyjątek w przypadku gdy zdjęcie nie zostanie przekazane do klasy.
+     * @param exception wyjątek generowany podczas wystapienia błędu
+     */
     @Override
     public void onError(@NonNull ImageCaptureException exception) {
         super.onError(exception);
