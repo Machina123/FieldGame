@@ -19,13 +19,27 @@ public class GameStatus implements Serializable {
     public Boolean isFinished;
 
     /**
+     * Data rozpoczęcia gry
+     */
+    public String gameStart;
+
+    /**
+     *  Data zakończenia gry
+     */
+    public String gameEnd;
+
+    /**
      * Konstruktor obiektu
      * @param currentRiddle Obecna zagadka
      * @param isFinished Informacja, czy gra została ukończona
+     * @param gameStart Informacje o dacie rozpoczęcia gry
+     * @param gameEnd Informacja o dacie zakończenia gry
      */
-    public GameStatus(int currentRiddle, Boolean isFinished){
+    public GameStatus(int currentRiddle, Boolean isFinished, String gameStart, String gameEnd){
         this.currentRiddle = currentRiddle;
         this.isFinished = isFinished;
+        this.gameStart = gameStart;
+        this.gameEnd = gameEnd;
     }
 
     /**
@@ -42,5 +56,21 @@ public class GameStatus implements Serializable {
      */
     public Boolean getFinished() {
         return isFinished;
+    }
+
+    /**
+     * Pobieranie informacji o dacie rozpoczęcia gry
+     * @return zwraca date rozpoczęcia gry w postaci napisu
+     */
+    public String getGameStart(){
+        return gameStart;
+    }
+
+    /**
+     * Pobieranie informacji o dacie zakonczenia gry
+     * @return zwraca date zakończenia gry w postaci napisu
+     */
+    public String getGameEnd(){
+        return gameEnd;
     }
 }

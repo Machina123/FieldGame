@@ -201,7 +201,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 JSONObject gameData = game_data.getJSONObject(0);
                 gameStatus = new GameStatus(
                         gameData.getInt("current_riddle"),
-                        gameData.getBoolean("finished")
+                        gameData.getBoolean("finished"),
+                        gameData.getString("time_begin"),
+                        gameData.getString("time_end")
                 );
                 isFinished(gameStatus.getFinished(), "Gra została ukończona");
             } else if (obj.has("access_token")) {

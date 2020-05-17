@@ -3,12 +3,15 @@ package net.machina.fieldgame;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.machina.fieldgame.data.Game;
 import net.machina.fieldgame.data.GameStatus;
@@ -40,6 +43,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Game game;
     private GameStatus gameStatus;
 
+    private TextView gameTitleView;
+    private TextView gameProgressView;
+    private TextView gameProgressView2;
+    private TextView gameDescriptionView;
+    private TextView gameDescriptionView2;
+    private TextView gameTimeView;
+    private TextView gameTimeView2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,32 +66,50 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         middleman = FieldGameNetworkMiddleman.getInstance();
         middleman.refreshToken(this);
-        findViewById(R.id.btnStartQR).setOnClickListener(this);
         findViewById(R.id.btnStartMap).setOnClickListener(this);
-        findViewById(R.id.btnStartLabeler).setOnClickListener(this);
         findViewById(R.id.btnGameLogout).setOnClickListener(this);
         middleman.getProgressForGame(game.getGameID(), this);
-
-
         riddleList = new ArrayList<>();
+
+        gameTitleView = findViewById(R.id.gameTitleView);
+        gameProgressView = findViewById(R.id.gameProgressView);
+        gameProgressView2 = findViewById(R.id.gameProgressView2);
+        gameDescriptionView = findViewById(R.id.gameDescriptionView);
+        gameDescriptionView2 = findViewById(R.id.gameDescriptionView2);
+        gameTimeView = findViewById(R.id.gameTimeView);
+        gameTimeView2 = findViewById(R.id.gameTimeView2);
+        //new Handler().postDelayed(() -> , 2000);
+
     }
 
+    public void displayGameData(){
+        gameTitleView.setText(game.getGameTitle());
+        gameProgressView2.setText("Twoj postęp w grze ");
+        gameDescriptionView2.setText("Treść zagadki");
+        if(gameStatus.isFinished){
+            gameProgressView.setText(game.getGameRiddleCount() + "/" + game.getGameRiddleCount());
+            gameDescriptionView.setText("Gra została ukończona.");
+            gameTimeView2.setText("Gra została ukończona");
+            gameTimeView.setText(gameStatus.getGameEnd().substring(0, gameStatus.getGameEnd().indexOf(".")));
+        }
+        else{
+            gameProgressView.setText(gameStatus.currentRiddle - 1 + "/" + game.getGameRiddleCount());
+            gameDescriptionView.setText(riddleObject.getRiddleDescription());
+            gameTimeView2.setText("Gra została rozpoczęta");
+            gameTimeView.setText(gameStatus.getGameStart().substring(0, gameStatus.getGameStart().indexOf(".")));
+        }
+
+    }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.btnStartQR:
-                startActivity(new Intent(GameActivity.this, ScannerActivity.class));
-                break;
             case R.id.btnStartMap:
                 Intent intent = new Intent(GameActivity.this, MapsActivity.class);
                 intent.putExtra(MapsActivity.KEY_GAME_DATA, game);
                 intent.putExtra(MapsActivity.KEY_GAME_STATUS_DATA, gameStatus);
                 intent.putExtra(MapsActivity.KEY_RIDDLES_DATA, riddleObject);
                 startActivityForResult(intent, CODE_MAP_LOAD);
-                break;
-            case R.id.btnStartLabeler:
-                startActivityForResult(new Intent(GameActivity.this, ImageLabelingActivity.class), IMAGE_LABELING_REQUEST);
                 break;
             case R.id.btnGameLogout:
                 finish();
@@ -115,6 +144,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                         if (rid.getRiddleNo() == gameStatus.getCurrentRiddle()) {
                             riddleObject = rid;
+                            displayGameData();
                         }
                     }
                 } else if (obj.has("game_data")) {
@@ -122,9 +152,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     JSONObject gameData = game_data.getJSONObject(0);
                     gameStatus = new GameStatus(
                             gameData.getInt("current_riddle"),
-                            gameData.getBoolean("finished")
+                            gameData.getBoolean("finished"),
+                            gameData.getString("time_begin"),
+                            gameData.getString("time_end")
                     );
                     middleman.getRiddlesForGame(game.getGameID(), this);
+
                     isFinished(gameStatus.getFinished(), "Ta gra jest już zakończona");
                 }else if(obj.has("access_token")) {
                     Log.d(TAG, "Access token refreshed");
@@ -145,7 +178,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     ArrayList<String> labelsList = data.getStringArrayListExtra(ImageLabelingActivity.KEY_DATA);
                     for(String labels: labelsList){
                         if(labels.contains(riddleObject.getRiddleDominantObject())) {
-                            middleman.advanceGame(1, this);
+                            middleman.advanceGame(game.getGameID(), this);
                             new AlertDialog.Builder(this).setMessage(SUCCESS_MASSAGE).setPositiveButton("OK", null).show();
                         }
                     }
