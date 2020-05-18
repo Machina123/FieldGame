@@ -33,7 +33,7 @@ public class MarkersHandler {
     }
 
     /**
-     * Aktualizuje pozycje znacznika na mapie na podstawie przekazanych w parametrach wartości.
+     * Aktualizuje pozycję znacznika na mapie na podstawie przekazanych w parametrach wartości.
      * @param lat szerokośc geograficzna punktu
      * @param lon długość geograficzna punktu
      */

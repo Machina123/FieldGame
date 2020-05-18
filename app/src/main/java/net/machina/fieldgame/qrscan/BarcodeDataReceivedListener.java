@@ -9,8 +9,8 @@ import java.util.List;
  */
 public interface BarcodeDataReceivedListener {
     /**
-     * Abstrakcyjna klasa pozwalająca wykonywać operacje na liscie kodów kreskowych uzyskanych z bazy Firebase Vision
-     * @param label lista kodów kreskowych obrazów pobrana z bazy Firebase Vision
+     * Abstrakcyjna klasa pozwalająca wykonywać operacje na liscie kodów kreskowych uzyskanych z bazy Firebase Vision.
+     * @param label lista kodów kreskowych pobrana z bazy Firebase Vision
      */
     void onBarcodeDataReceived(List<FirebaseVisionBarcode> data);
 }

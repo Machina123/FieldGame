@@ -33,7 +33,7 @@ public class QrScanImageAnalyzer implements ImageAnalysis.Analyzer {
 
     /**
      * Metoda inicjalizująca {@link BarcodeDataReceivedListener} dla obiektu tej klasy.
-     * @param barcodeDataReceivedListener okiekt {@link BarcodeDataReceivedListener} który ma zostać przypisany do tego obiektu.
+     * @param barcodeDataReceivedListener {@link BarcodeDataReceivedListener} który ma zostać przypisany do tego obiektu.
      */
     public void setBarcodeDataReceivedListener(BarcodeDataReceivedListener barcodeDataReceivedListener) {
         this.barcodeDataReceivedListener = barcodeDataReceivedListener;
@@ -42,7 +42,7 @@ public class QrScanImageAnalyzer implements ImageAnalysis.Analyzer {
     /**
      * Metoda zwracająca obiekt typu FirebaseVisionImageMetadata zawierający orientację zdjęcia w zależności od
      * orientacji aparatu przy robieniu zdjęcia.
-     * @param degrees orientację zdjęcia podanych w stopniach. Fukcja przyjmuje wartosci 0, 90, 180, 270
+     * @param degrees orientacja zdjęcia podana w stopniach. Fukcja przyjmuje wartosci 0, 90, 180, 270
      * @return         obiekt typu FirebaseVisionImageMetadata zawierajacy orientację zdjęcia w stopniach
      */
     private int degreesToFirebaseRotation(int degrees) {
@@ -64,7 +64,7 @@ public class QrScanImageAnalyzer implements ImageAnalysis.Analyzer {
     /**
      * Jest wywoływana w momencie uzyskania obrazu kodu QR z klasy {@link net.machina.fieldgame.ScannerActivity}.
      * Przetwarza otrzymane zdjęcie na obiekt typu Image a następnie dekoduje kod QR na zdjęciu i przekazuję do obiektu typu {@link BarcodeDataReceivedListener}.
-     * W przypadku gdy operacja sie nie powiedzie fukcja zwraca wyjątek na standardowe wyjście diagnostyczne.
+     * W przypadku gdy operacja sie nie powiedzie funkcja zwraca wyjątek na standardowe wyjście diagnostyczne.
      * @param proxyImage obraz uzyskany z widoku aparatu
      */
     @Override
