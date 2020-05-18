@@ -13,11 +13,30 @@ import net.machina.fieldgame.network.OnDataReceivedListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Ekran rejestracji
+ */
 public class RegisterActivity extends AppCompatActivity implements OnDataReceivedListener {
 
+    /**
+     * Referencja do klasy pośredniczącej w połączeniach z serwerem
+     */
     private FieldGameNetworkMiddleman middleman;
-    private EditText txtLogin, txtPassword;
 
+    /**
+     * Referencja do pola tekstowego zawierającego nazwę użytkownika
+     */
+    private EditText txtLogin;
+
+    /**
+     * Referencja do pola tekstowego zawierającego hasło
+     */
+    private EditText txtPassword;
+
+    /**
+     * Metoda wywoływana przy pierwszym rysowaniu okna
+     * @param savedInstanceState Zapisany stan aktywności
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +50,10 @@ public class RegisterActivity extends AppCompatActivity implements OnDataReceive
         });
     }
 
+    /**
+     * Metoda wywoływana po otrzymaniu odpowiedzi od serwera
+     * @param result Odpowiedź serwera w formie tekstowej
+     */
     @Override
     public void onDataReceived(String result) {
         runOnUiThread(() -> {
@@ -54,6 +77,9 @@ public class RegisterActivity extends AppCompatActivity implements OnDataReceive
         });
     }
 
+    /**
+     * Metoda pomocnicza - blokuje możliwość wprowadzania danych w pola tekstowe
+     */
     public void disableLoginFields() {
         runOnUiThread(() ->  {
             findViewById(R.id.layout_progress).setVisibility(View.VISIBLE);
@@ -63,6 +89,9 @@ public class RegisterActivity extends AppCompatActivity implements OnDataReceive
         });
     }
 
+    /**
+     * Metoda pomocnicza - odblokowuje możliwość wprowadzania danych w pola tekstowe
+     */
     public void enableLoginFields() {
         runOnUiThread(() -> {
             findViewById(R.id.layout_progress).setVisibility(View.INVISIBLE);

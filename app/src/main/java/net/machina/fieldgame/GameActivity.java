@@ -3,7 +3,6 @@ package net.machina.fieldgame;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import net.machina.fieldgame.data.Game;
 import net.machina.fieldgame.data.GameStatus;
@@ -26,31 +24,80 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Ekran ze szczegółami gry
+ */
 public class GameActivity extends AppCompatActivity implements View.OnClickListener, OnDataReceivedListener {
+    /**
+     * Etykieta identyfikująca wpisy w dzienniku logcat
+     */
     private static final String TAG = "FieldGame/Game";
+
+    /**
+     * Klucz wykorzystany do przesłania/odebrania danych o grze z/do innej aktywności
+     */
     public static final String KEY_GAME_DATA = "game_data";
-    public static final String KEY_GAME_STATUS_DATA = "game_status_data";
-    public static final String KEY_RIDDLES_DATA = "riddles_data";
-    private static final String KEY_IMAGE_LABELING_DATA = "labels";
+
+    /**
+     * Wiadomość wyświetlana po znalezieniu właściwego przedmiotu zagadki
+     */
     private final String SUCCESS_MASSAGE = "Brawo udało Ci sie znaleść odpowiedni obiekt";
+
+    /**
+     * Wiadomość wyświetlana po znalezieniu innego niż właściwy przedmiotu zagadki
+     */
     private final String FAILED_MASSAGE = "Niestedy nie o ten obiekt chodziło. Szukaj dalej.";
+
+    /**
+     * Pole pomocnicze przechowujące informację o znalezieniu właściwego przedmiotu zagadki
+     */
     private Boolean found_object = false;
+
+    /**
+     * Unikalny kod zapytania wysyłany podczas odpytywania aktywności {@link ImageLabelingActivity}
+     */
     private static final int IMAGE_LABELING_REQUEST = 2137;
+
+    /**
+     * Unikalny kod zapytania wysyłany podczas odpytywania aktywności {@link MapsActivity}
+     */
     private static final int CODE_MAP_LOAD = 420;
+
+    /**
+     * Lista zagadek pobrana z serwera
+     */
     private List<Riddle> riddleList;
+
+    /**
+     * Aktualnie przetwarzana zagadka
+     */
     private Riddle riddleObject;
+
+    /**
+     * Referencja do klasy pośredniczącej w połączeniach z serwerem
+     */
     private FieldGameNetworkMiddleman middleman;
+
+    /**
+     * Informacje o aktualnej grze
+     */
     private Game game;
+
+    /**
+     * Informacje o aktualnym stanie gry
+     */
     private GameStatus gameStatus;
 
-    private TextView gameTitleView;
-    private TextView gameProgressView;
-    private TextView gameProgressView2;
-    private TextView gameDescriptionView;
-    private TextView gameDescriptionView2;
-    private TextView gameTimeView;
-    private TextView gameTimeView2;
+    /**
+     * Referencja do etykiety tekstowej opisującej postęp w grze
+     */
+    private TextView gameTitleView, gameProgressView, gameProgressView2, gameDescriptionView,
+            gameDescriptionView2, gameTimeView, gameTimeView2;
 
+    /**
+     * Metoda wywoływana podczas pierwszego rysowania okna
+     * @param savedInstanceState Zapisany stan aktywności
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,10 +125,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         gameDescriptionView2 = findViewById(R.id.gameDescriptionView2);
         gameTimeView = findViewById(R.id.gameTimeView);
         gameTimeView2 = findViewById(R.id.gameTimeView2);
-        //new Handler().postDelayed(() -> , 2000);
-
     }
 
+    /**
+     * Metoda wyświetlająca postęp w wybranej grze po pobraniu danych z serwera
+     */
     public void displayGameData(){
         gameTitleView.setText(game.getGameTitle());
         gameProgressView2.setText("Twoj postęp w grze ");
@@ -101,6 +149,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * Metoda wywoływana podczas naciśnięcia dowolnego obiektu klasy View, w tym przycisków
+     * @param v Widok (obiekt klasy View), który został naciśnięty
+     */
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
@@ -118,7 +170,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(GameActivity.this, "Otrzymano onClick od nieznanego widoku", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     @Override
     public void onDataReceived(String result) {
@@ -169,6 +220,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    /**
+     * Metoda wywoływana po otrzymaniu odpowiedzi od innej aktywności (innego "okna")
+     * @param requestCode Unikalny kod zapytania
+     * @param resultCode Stan odpowiedzi (OK/Anulowano)
+     * @param data Dane zwrócone przez aktywność
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -199,6 +256,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Metoda pomocnicza sprawdzająca, czy gra została ukończona
+     * @param finished Informacja z serwera, czy gracz ukończył grę
+     * @param message Wiadomość, która zostanie wyświetlona
+     */
     public void isFinished(Boolean finished, String message) {
         if (finished) {
             new AlertDialog.Builder(this).setMessage(message).setPositiveButton("OK", (dialog, which) ->{finish();}).show();

@@ -31,16 +31,50 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Ekran listy gier, do których dołączył użytkownik
+ */
 public class GameListActivity extends AppCompatActivity implements OnDataReceivedListener, GameSelectedListener, View.OnClickListener {
 
+    /**
+     * Unikalny kod zapytania, dołączany w celu odróżnienia odpowiedzi od skanera kodów QR od innych
+     */
     private static final int CODE_QR_REQUEST = 2137;
+
+    /**
+     * Referencja do widoku listy
+     */
     private RecyclerView recyclerView;
+
+    /**
+     * Referencja do przycisku umożliwiającego dołączenie do gry
+     */
     private FloatingActionButton fabJoin;
+
+    /**
+     * Adapter widoku listy gier
+     */
     private GameAdapter adapter;
+
+    /**
+     * Lista gier pobrana z serwera
+     */
     private List<Game> gameList;
+
+    /**
+     * Referencja do klasy pośredniczącej w połączeniach z serwerem
+     */
     private FieldGameNetworkMiddleman middleman;
+
+    /**
+     * Etykieta identyfikująca wpisy w dzienniku logcat
+     */
     public static final String TAG = "FieldGame/GameList";
 
+    /**
+     * Metoda wywoływana przy pierwszym rysowaniu okna
+     * @param savedInstanceState Zapisany stan aktywności
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +95,10 @@ public class GameListActivity extends AppCompatActivity implements OnDataReceive
         middleman.getMyProgress(this);
     }
 
+    /**
+     * Metoda wywoływana po otrzymaniu odpowiedzi od serwera
+     * @param result Odpowiedź serwera w formie tekstowej
+     */
     @Override
     public void onDataReceived(String result) {
         runOnUiThread(() -> {
@@ -106,6 +144,10 @@ public class GameListActivity extends AppCompatActivity implements OnDataReceive
         });
     }
 
+    /**
+     * Metoda wywoływana przy wybraniu gry z listy
+     * @param game Dane wybranej gry
+     */
     @Override
     public void onGameSelected(Game game) {
         Intent intent = new Intent(this, GameActivity.class);
@@ -113,6 +155,10 @@ public class GameListActivity extends AppCompatActivity implements OnDataReceive
         startActivity(intent);
     }
 
+    /**
+     * Metoda wywoływana podczas naciśnięcia dowolnego obiektu klasy View, w tym przycisków
+     * @param v Widok (obiekt klasy View), który został naciśnięty
+     */
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.btnJoin) {
@@ -120,6 +166,12 @@ public class GameListActivity extends AppCompatActivity implements OnDataReceive
         }
     }
 
+    /**
+     * Metoda wywoływana po otrzymaniu odpowiedzi od innej aktywności (innego "okna")
+     * @param requestCode Unikalny kod zapytania
+     * @param resultCode Stan odpowiedzi (OK/Anulowano)
+     * @param data Dane zwrócone przez aktywność
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -149,6 +201,9 @@ public class GameListActivity extends AppCompatActivity implements OnDataReceive
         }
     }
 
+    /**
+     * Metoda wywoływana po naciśnięciu przycisku lub wykonaniu gestu "wstecz"
+     */
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(GameListActivity.this)

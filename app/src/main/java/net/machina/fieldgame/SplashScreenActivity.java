@@ -6,11 +6,20 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import net.machina.fieldgame.network.FieldGameNetworkMiddleman;
-import net.machina.fieldgame.network.OnDataReceivedListener;
-
+/**
+ * Ekran powitalny aplikacji
+ */
 public class SplashScreenActivity extends AppCompatActivity {
+
+    /**
+     * Czas, po którym ekran powitalny zostanie zamknięty
+     */
     public static final int SPLASH_DISMISS_TIME_MS = 2000;
+
+    /**
+     * Metoda wywoływana podczas pierwszego rysowania okna
+     * @param savedInstanceState Zapisany stan aktywności
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,11 +29,5 @@ public class SplashScreenActivity extends AppCompatActivity {
             SplashScreenActivity.this.startActivity(startIntent);
             SplashScreenActivity.this.finish();
         }, SPLASH_DISMISS_TIME_MS);
-        FieldGameNetworkMiddleman.getInstance().login("zaq1", "@WSX", new OnDataReceivedListener() {
-            @Override
-            public void onDataReceived(String result) {
-
-            }
-        });
     }
 }

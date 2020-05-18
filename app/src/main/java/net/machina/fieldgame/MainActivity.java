@@ -15,12 +15,30 @@ import net.machina.fieldgame.network.OnDataReceivedListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Ekran logowania
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnDataReceivedListener {
 
-//    public static final int CODE_QR_REQUEST = 2137;
+    /**
+     * Referencja do klasy pośredniczącej w połączeniach z serwerem
+     */
     private FieldGameNetworkMiddleman middleman;
-    private EditText txtLogin, txtPassword;
 
+    /**
+     * Referencja do pola tekstowego zawierającego nazwę użytkownika
+     */
+    private EditText txtLogin;
+
+    /**
+     * Referencja do pola tekstowego zawierającego hasło
+     */
+    private EditText txtPassword;
+
+    /**
+     * Metoda wywoływana przy pierwszym rysowaniu okna
+     * @param savedInstanceState Zapisany stan aktywności
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +50,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btnRegister).setOnClickListener(this);
     }
 
+    /**
+     * Metoda wywoływana podczas naciśnięcia dowolnego obiektu klasy View, w tym przycisków
+     * @param v Widok (obiekt klasy View), który został naciśnięty
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -45,6 +67,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Metoda wywoływana po otrzymaniu odpowiedzi od serwera
+     * @param result Odpowiedź serwera w formie tekstowej
+     */
     @Override
     public void onDataReceived(String result) {
         enableLoginFields();
@@ -87,6 +113,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    /**
+     * Metoda pomocnicza - blokuje możliwość wprowadzania danych w pola tekstowe
+     */
     public void disableLoginFields() {
         runOnUiThread(() ->  {
             findViewById(R.id.layout_progress).setVisibility(View.VISIBLE);
@@ -97,6 +126,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    /**
+     * Metoda pomocnicza - odblokowuje możliwość wprowadzania danych w pola tekstowe
+     */
     public void enableLoginFields() {
         runOnUiThread(() -> {
             findViewById(R.id.layout_progress).setVisibility(View.INVISIBLE);
