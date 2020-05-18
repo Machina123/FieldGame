@@ -6,16 +6,16 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
- *  Klasa mająca za zadanie sprawdzenie czy użtkowanik jest połaczony z internetem.
+ *  Klasa mająca za zadanie sprawdzenie czy użytkownik jest połaczony z internetem
  */
 public class InternetCheck extends AsyncTask<Void, Void, Boolean> {
 
     /**
-     * Interfejs reprezentujący klase próbującą połączyć sie z siecią
+     * Interfejs reprezentujący klasę próbującą połączyć sie z siecią
      */
     public interface Consumer{
         /**
-         * Abstrakcyjna fukcja w której wykonywane są dalsze operacje w zależności od tego czy mamy połączenie z internetem czy nie.
+         * Abstrakcyjna fukcja w której wykonywane są dalsze operacje w zależności od tego, czy mamy połączenie z internetem, czy nie
          * @param internet informacja o tym czy użytkownikowi udało połączyć sie z siecią
          */
         void accept(boolean internet);
@@ -55,8 +55,8 @@ public class InternetCheck extends AsyncTask<Void, Void, Boolean> {
     }
 
     /**
-     * Metoda wywołujaca się po sprawdzeniu połaczenia z siecią.
-     * Przekazuję czy użądzenie połączone jest z interentem do obiektu typu Consumer.
+     * Metoda wywołująca się po sprawdzeniu połączenia z siecią.
+     * Przekazuję czy urządzenie połączone jest z interentem do obiektu typu Consumer.
      * @param aBoolean informacja czy udało się uzyskać połączenie
      */
     @Override

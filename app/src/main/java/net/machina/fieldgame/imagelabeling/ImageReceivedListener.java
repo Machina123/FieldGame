@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface ImageReceivedListener {
     /**
-     * Abstrakcyjna klasa pozwalająca wykonywać operacje na liscie etykiet uzyskanych z bazy Firebase Vision
+     * Abstrakcyjna klasa pozwalająca wykonywać operacje na liście etykiet uzyskanych z bazy Firebase Vision
      * @param label lista etykiet obrazów pobrana z bazy Firebase Vision
      */
     void onImageReceived(List<FirebaseVisionImageLabel> label);

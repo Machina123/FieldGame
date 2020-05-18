@@ -60,7 +60,7 @@ public class GameStatus implements Serializable {
 
     /**
      * Pobieranie informacji o dacie rozpoczęcia gry
-     * @return zwraca date rozpoczęcia gry w postaci napisu
+     * @return Data rozpoczęcia gry w postaci napisu
      */
     public String getGameStart(){
         return gameStart;
@@ -68,7 +68,7 @@ public class GameStatus implements Serializable {
 
     /**
      * Pobieranie informacji o dacie zakonczenia gry
-     * @return zwraca date zakończenia gry w postaci napisu
+     * @return Data zakończenia gry w postaci napisu
      */
     public String getGameEnd(){
         return gameEnd;

@@ -84,7 +84,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final String SUCCESS_MASSAGE = "Brawo udało Ci sie znaleść odpowiedni obiekt";
 
     /**
-     * Wiadomość wyświetlana w momencie znalezienia nie poprawnego obiektu.
+     * Wiadomość wyświetlana w momencie znalezienia niepoprawnego obiektu.
      */
     private final String FAILED_MASSAGE = "Niestedy nie o ten obiekt chodziło. Szukaj dalej.";
 
@@ -99,7 +99,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final long MIN_REFRESH_DISTANCE = 1;
 
     /**
-     * Obiekt mapy google.
+     * Obiekt mapy Google.
      */
     private GoogleMap mMap;
 

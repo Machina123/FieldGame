@@ -73,7 +73,7 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
     public static final String KEY_DATA = "qrdata";
 
     /**
-     * Metoda wywoływana przy tworzeniu okna, inicjalizowane są w niej wszytkie parametry i wywoływane są wszystkie operacje które powinny sie wykonac przy starcie okna.
+     * Metoda wywoływana przy tworzeniu okna, inicjalizowane są w niej wszytkie parametry i wywoływane są wszystkie operacje, które powinny się wykonać przy starcie okna.
      * @param savedInstanceState zapisany stan aktywności
      */
     @Override
@@ -100,8 +100,9 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
     }
 
     /**
-     * Metoda odpowiadająca za wyświetlanie podglądu obrazu z aparatu na ekranie telefonu oraz za przesłanie obraz do klasy analizującej go pod kątem tego czy znajduje sie tam kod QR, w przypadku kiedy
-     * kod QR zostanie wykryty zczytuje z niego dane.
+     * Metoda odpowiadająca za wyświetlanie podglądu obrazu z aparatu na ekranie telefonu oraz za
+     * przesłanie zdjęcia do klasy analizującej go pod kątem tego, czy znajduje się tam kod QR,
+     * w przypadku kiedykod QR zostanie wykryty, odczytuje z niego dane.
      * @param cameraProvider referencja do klasy udostępniającej obraz z aparatu
      */
     void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {

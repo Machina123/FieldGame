@@ -17,6 +17,7 @@ import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 
 import net.machina.fieldgame.connectingcheck.InternetCheck;
+
 import java.util.List;
 
 /**
@@ -43,10 +44,9 @@ public class ImageCaptureCallback extends ImageCapture.OnImageCapturedCallback {
     }
 
     /**
-     * Metoda zwracająca obiekt typu FirebaseVisionImageMetadata zawierający orientację zdjęcia w zależności od
-     * orientacji aparatu przy robieniu zdjęcia.
-     * @param degrees orientację zdjęcia podanych w stopniach. Fukcja przyjmuje wartosci 0, 90, 180, 270
-     * @return         obiekt typu FirebaseVisionImageMetadata zawierajacy orientację zdjęcia w stopniach
+     * Metoda zwracająca obiekt typu FirebaseVisionImageMetadata zawierający orientację aparatu przy robieniu zdjęcia.
+     * @param degrees Orientacja aparatu w stopniach. Fukcja przyjmuje wartosci 0, 90, 180, 270
+     * @return obiekt typu FirebaseVisionImageMetadata zawierajacy orientację zdjęcia w stopniach
      */
     private int degreesToFirebaseRotation(int degrees) {
         switch (degrees) {
@@ -65,10 +65,10 @@ public class ImageCaptureCallback extends ImageCapture.OnImageCapturedCallback {
     }
 
     /**
-     * Jest wywoływana w momencie gdy zdjęcie zostanie zrobione poprawnie.
-     * Przetwarza otrzymane zdjęcie na obiekt typu Image a następnie odpytuje baze Firebase o liste etykiet pasujących
+     * Metoda wywoływana w momencie gdy zdjęcie zostanie zrobione poprawnie.
+     * Przetwarza otrzymane zdjęcie na obiekt typu Image a następnie odpytuje baze Firebase o listę etykiet pasujących
      * do wykonanego zdjęcia i przekazuję ją do obiektu typu {@link ImageReceivedListener}.
-     * W przypadku gdy operacja sie nie powiedzie fukcja zwraca wyjątek na standardowe wyjście diagnostyczne.
+     * W przypadku gdy operacja się nie powiedzie, fukcja zwraca wyjątek na standardowe wyjście diagnostyczne.
      * @param proxyImage obraz uzyskany podczas robienia zdjęcia
      */
     @Override
