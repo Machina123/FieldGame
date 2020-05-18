@@ -37,30 +37,121 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Klasa zajmujaca sie wyświetlaniem mapy na ekran uzytkownika oraz wykonywaniem operacji na mapach google.
+ */
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, OnDataReceivedListener {
 
+    /**
+     * Nazwa klucza pod którym znajdują sie dane przesywałe z tej klasy do {@link Game}.
+     */
     public static final String KEY_GAME_DATA = "game_data";
+
+    /**
+     * Nazwa klucza pod którym znajdują sie dane przesywałe z tej klasy do {@link GameStatus}.
+     */
     public static final String KEY_GAME_STATUS_DATA = "game_status_data";
+
+    /**
+     * Nazwa klucza pod którym znajdują sie dane przesywałe z tej klasy do {@link Riddle}.
+     */
     public static final String KEY_RIDDLES_DATA = "riddles_data";
+
+    /**
+     * Nazwa klucza pod którym znajdują sie dane przesywałe z tej klasy podczas wywołania metody "isFinished".
+     */
     public static final String KEY_GAME_FINISHED = "finished";
+
+    /**
+     * Etykieta identyfikująca wpis w dzienniku.
+     */
     private static final String TAG = " tak";
+
+    /**
+     * Unikalny kod zapytania, dołączany w celu odróżnienia odpowiedzi od klasy {@link ImageLabelingActivity} od innych
+     */
     private static final int IMAGE_LABELING_REQUEST = 2137;
+
+    /**
+     * Nazwa klucza pod którym znajdują sie dane przesywałe z klasy {@link ImageLabelingActivity} do tej klasy.
+     */
     private static final String KEY_DATA = "labels";
+
+    /**
+     * Wiadomość wyświetlana w momencie znalezienia poprawnego obiektu.
+     */
     private final String SUCCESS_MASSAGE = "Brawo udało Ci sie znaleść odpowiedni obiekt";
+
+    /**
+     * Wiadomość wyświetlana w momencie znalezienia nie poprawnego obiektu.
+     */
     private final String FAILED_MASSAGE = "Niestedy nie o ten obiekt chodziło. Szukaj dalej.";
+
+    /**
+     * Czas po którym stan mapy ma zostać odświeżony
+     */
     private final long MIN_REFRESH_TIME = 1000;
+
+    /**
+     * Dystans który należy pokonać aby odświeżyć mape
+     */
     private final long MIN_REFRESH_DISTANCE = 1;
+
+    /**
+     * Obiekt mapy google.
+     */
     private GoogleMap mMap;
+
+    /**
+     * Obiekty nasłuchiwiacza lokalizacji.
+     */
     private LocationListener locationListener;
+
+    /**
+     * Obiekt menadzera lokacji.
+     */
     private LocationManager locationManager;
+
+    /**
+     * Referencja do klasy pośredniczącej w połączeniach z serwerem
+     */
     private FieldGameNetworkMiddleman middleman;
+
+    /**
+     * Referencja do przycisku przenoszącego do widoku aparatu.
+     */
     private Button take_picture_btn;
+
+    /**
+     * Lista obiektów przechowujących zagadki znajdującę sie w danej grze pobrana z serwera.
+     */
     private List<Riddle> riddleList;
+
+    /**
+     * Zagadka która aktulanie rozwiązuje użytkownik.
+     */
     private Riddle riddleObject;
+
+    /**
+     * Obiekt przechowujący informacje o aktualnie wybranej grze.
+     */
     private Game game;
+
+    /**
+     * Obiekt przechowujący informacje o statusie aktualnie wybranej gry.
+     */
     private GameStatus gameStatus;
+
+    /**
+     * Zmienna sprawdzająca czy w wynikach zwróconych z klasy {@link ImageLabelingActivity} znajduję sie poszukiwany obiekt.
+     */
     private Boolean found_object = false;
 
+    /**
+     * Metoda wywoływana przy tworzeniu okna, inicjalizowane są w niej wszytkie parametry i wywoływane są wszystkie operacje które powinny sie wykonac przy starcie okna.
+     * @param savedInstanceState zapisany stan aktywności
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +183,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
     }
 
+    /**
+     *  Metoda zajmująca się wszytkimi operacjami związanymi z obsługą mapy.
+     *  Tworzone są w niej punkty na mapie przy pomocy klasy {@link MarkersHandler}, oraz aktualizuje ona stan mapy po wykryciu zmiany lokalizacji.
+     * @param googleMap obiekt mapy wyświetlany na ekranie
+     */
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
@@ -144,6 +240,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Metoda zajmujaca sie wykonywaniem odpowiednich czynności po kliknięciu na przycisk
+     * @param v widok do którego metoda jest podpięta
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -155,6 +255,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Metoda zajmująca sie przetwarzaniem danych otwrzymanych z zewnetrznych klas.
+     * @param requestCode kod klasy z której przychodzi rządanie
+     * @param resultCode status przychodzącego rządania
+     * @param data dane przychodzace z zewnętrznej klasy
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -178,6 +284,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Metoda sprawdzająca czy gra jest zakończona.
+     * W przypadku kiedy gra jest zakończona zwraca odpowiedni komunikat.
+     * @param finished przechowuje informacje o stanie gry
+     * @param message informacja wyświetlana na akranie po zakończeniu gry
+     */
     public void isFinished(Boolean finished, String message) {
         if (finished) {
             new AlertDialog.Builder(this)

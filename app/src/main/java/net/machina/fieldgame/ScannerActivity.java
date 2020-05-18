@@ -31,17 +31,51 @@ import net.machina.fieldgame.qrscan.QrScanImageAnalyzer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Klasa zajmująca sie pobieraniem obrazu z aparatu urządzenia i wysyłaniem go do analizy pod kątem obecności kodu QR.
+ *
+ */
 public class ScannerActivity extends AppCompatActivity implements LifecycleOwner, CameraXConfig.Provider, BarcodeDataReceivedListener {
 
+    /**
+     * Kod zapytania o przyznanie pozwolenia do korzystania z aparatu.
+     */
     private final int REQUEST_CODE_PERMISSIONS = 0xf1e1d;
+
+    /**
+     * Przechowuje status pozwolenia na korzystanie z aparatu urządzenia.
+     */
     private String[] REQUIRED_PERMISSIONS = {Manifest.permission.CAMERA};
+
+    /**
+     * Zmienna przechowująca widok podglądu obrazu.
+     */
     private PreviewView viewfinder;
+
+    /**
+     * Obiekt klasy udostępniającej obraz z aparatu.
+     */
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
+
+    /**
+     * Obiekt klasy {@link QrScanImageAnalyzer} odpowiadającej za analizowanie obrazu i odczytanie z niego kodu QR
+     */
     private QrScanImageAnalyzer analyzer;
+
+    /**
+     * Etykieta identyfikująca wpis w dzienniku.
+     */
     private static final String TAG = "FieldGame/QRScan";
 
+    /**
+     * Nazwa klucza pod którym znajdują sie dane przesywałe z tej klasy.
+     */
     public static final String KEY_DATA = "qrdata";
 
+    /**
+     * Metoda wywoływana przy tworzeniu okna, inicjalizowane są w niej wszytkie parametry i wywoływane są wszystkie operacje które powinny sie wykonac przy starcie okna.
+     * @param savedInstanceState zapisany stan aktywności
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,11 +99,15 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
 
     }
 
+    /**
+     * Metoda odpowiadająca za wyświetlanie podglądu obrazu z aparatu na ekranie telefonu oraz za przesłanie obraz do klasy analizującej go pod kątem tego czy znajduje sie tam kod QR, w przypadku kiedy
+     * kod QR zostanie wykryty zczytuje z niego dane.
+     * @param cameraProvider referencja do klasy udostępniającej obraz z aparatu
+     */
     void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
         int rotation = viewfinder.getDisplay().getRotation();
         Preview preview = new Preview.Builder()
                 .setTargetResolution(new Size(1920,1080))
-//                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .setTargetRotation(rotation)
                 .build();
 
@@ -81,7 +119,6 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
 
         ImageAnalysis analysisUseCase = new ImageAnalysis.Builder()
                 .setTargetResolution(new Size(1920,1080))
-//                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .setTargetRotation(rotation)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build();
@@ -99,12 +136,22 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
 
     }
 
+    /**
+     * Metoda zwracająca domyślne ustawienia aparatu.
+     * @return zwraca ustawiania aparatu
+     */
     @NonNull
     @Override
     public CameraXConfig getCameraXConfig() {
         return Camera2Config.defaultConfig();
     }
 
+    /**
+     * Sprawdza czy pozwolenie na korzystanie z aparatu urządzenia zostało przyznane i wyświetla odpowiedni komunikat w zależnościod wyboru użytkownika.
+     * @param requestCode kod zezwolenia które chcemy uzyskać
+     * @param permissions tablica przechowująca informacje o przyznanych pozwoleniach
+     * @param grantResults przechowuje stan uprawnienia (udzielone/ nie udzielone)
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == REQUEST_CODE_PERMISSIONS) {
@@ -116,6 +163,10 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
         }
     }
 
+    /**
+     * Metoda sprawdza czy użytkownik zezwolił na korzystanie z aparatu urządzenia
+     * @return zwraca odpowiedz czy pozwolenie zostało przyznane (tak/nie)
+     */
     private boolean checkPermissionsGranted() {
         for(String permission : REQUIRED_PERMISSIONS) {
             if(ContextCompat.checkSelfPermission(getApplicationContext(), permission) != PackageManager.PERMISSION_GRANTED) return false;
@@ -123,6 +174,10 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
         return true;
     }
 
+    /**
+     *  Metoda odbierająca dane z analizatora kodów QR.
+     * @param data dane przekazane z analizatora
+     */
     @Override
     public void onBarcodeDataReceived(List<FirebaseVisionBarcode> data) {
         if(data != null && data.size() > 0) {
@@ -133,6 +188,9 @@ public class ScannerActivity extends AppCompatActivity implements LifecycleOwner
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void onBackPressed() {
         setResult(RESULT_CANCELED);
